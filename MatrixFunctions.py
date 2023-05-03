@@ -26,3 +26,15 @@ def dot_product(A, B):
             raise ValueError("Długość wektorów A i B musi być taka sama.")
         result = sum([A[i] * B[i] for i in range(len(A))])
         return result
+
+
+def sub(A, b):
+    for i in range(len(A)):
+        if isinstance(A[i], float) or isinstance(A[i], int):
+            A[i] -= b
+            continue
+
+        for j in range(len(A[i])):
+            A[i][j] -= b
+
+    return A

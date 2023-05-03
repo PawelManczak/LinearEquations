@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from MatrixFunctions import dot_product
+from MatrixFunctions import dot_product, sub
 
 
 class Test(TestCase):
@@ -28,3 +28,12 @@ class Test(TestCase):
             assert False
         except ValueError:
             pass
+
+    def test_sub(self):
+        t1 = [1]
+
+        assert sub(t1, 1) == [0]
+
+        t2 = [1, 1, 1, 1, 1]
+
+        assert sub(t2, 2) == [-1, -1, -1, -1, -1]

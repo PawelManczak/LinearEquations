@@ -3,6 +3,35 @@ from math import sin
 
 from MatrixFunctions import dot_product
 
+
+def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
+    n = len(b)
+    x = [0] * n  # początkowe przybliżenie
+
+    for i in range(max_iterations):
+        x_new = [0] * n
+
+        # obliczanie nowych wartości x_i
+        for j in range(n):
+            s = 0
+            for k in range(n):
+                if k != j:
+                    s += A[j][k] * x[k]
+            x_new[j] = (b[j] - s) / A[j][j]
+
+        # sprawdzanie warunku zakończenia
+        r = [b[j] - dot_product(A[j], x_new) for j in range(n)]
+        error = dot_product(r, r)
+        if error < tolerance * tolerance:
+            return x_new
+
+        x = x_new
+
+    raise Exception("Metoda Jacobiego nie zbiega się")
+
+
+
+
 N = 9  # *5*6
 A = [[0 for i in range(N)] for j in range(N)]
 
@@ -35,3 +64,6 @@ c = dot_product(A, b)
 v1 = [1, 2, 3]
 v2 = [4, 5, 6]
 print(dot_product(v1, v2))
+
+print(solve_jacobi(A, b))
+
