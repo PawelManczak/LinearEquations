@@ -1,10 +1,12 @@
 # Pawel Manczak 188756
+import time
 from math import sin
 
 from MatrixFunctions import dot_product
 
 
 def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
+    time0 = time.time()
     n = len(b)
     x = [0] * n  # początkowe przybliżenie
 
@@ -23,6 +25,9 @@ def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
         r = [b[j] - dot_product(A[j], x_new) for j in range(n)]
         error = dot_product(r, r)
         if error < tolerance * tolerance:
+            print("Jacobi's method")
+            print('time:', time.time() - time0)
+            print('iterations:', i)
             return x_new
 
         x = x_new
@@ -31,7 +36,7 @@ def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
 
 
 def gauss_seidel(A, b, max_iter=1000, epsilon=1e-6):
-
+    time0 = time.time()
 
     n = len(A)
     x = [0] * n
@@ -47,9 +52,13 @@ def gauss_seidel(A, b, max_iter=1000, epsilon=1e-6):
         r = [b[j] - dot_product(A[j], x) for j in range(n)]
         error = dot_product(r, r)
         if error < epsilon * epsilon:
+            print("Gaus_seidel method")
+            print('time:', time.time() - time0)
+            print('iterations:', i)
             return x
 
-    return x
+    raise Exception("Metoda Gausa-Seidla nie zbiega się")
+
 
 N = 9  # *5*6
 A = [[0 for i in range(N)] for j in range(N)]
