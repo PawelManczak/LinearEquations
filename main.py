@@ -30,7 +30,26 @@ def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
     raise Exception("Metoda Jacobiego nie zbiega się")
 
 
+def gauss_seidel(A, b, max_iter=1000, epsilon=1e-6):
 
+
+    n = len(A)
+    x = [0] * n
+
+    for k in range(max_iter):
+        for i in range(n):
+            s = 0
+            for j in range(n):
+                if i != j:
+                    s += A[i][j] * x[j]
+            x[i] = (b[i] - s) / A[i][i]
+
+        r = [b[j] - dot_product(A[j], x) for j in range(n)]
+        error = dot_product(r, r)
+        if error < epsilon * epsilon:
+            return x
+
+    return x
 
 N = 9  # *5*6
 A = [[0 for i in range(N)] for j in range(N)]
@@ -66,4 +85,4 @@ v2 = [4, 5, 6]
 print(dot_product(v1, v2))
 
 print(solve_jacobi(A, b))
-
+print(gauss_seidel(A, b))
