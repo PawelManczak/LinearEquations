@@ -5,12 +5,12 @@ from math import sin
 from MatrixFunctions import dot_product
 
 
-def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
+def jacobi(A, b, max_iter=1000, epsilon=1e-9):
     time0 = time.time()
     n = len(b)
     x = [0] * n  # początkowe przybliżenie
 
-    for i in range(max_iterations):
+    for i in range(max_iter):
         x_new = [0] * n
 
         # obliczanie nowych wartości x_i
@@ -24,7 +24,7 @@ def solve_jacobi(A, b, max_iterations=1000, tolerance=1e-9):
         # sprawdzanie warunku zakończenia
         r = [b[j] - dot_product(A[j], x_new) for j in range(n)]
         error = dot_product(r, r)
-        if error < tolerance * tolerance:
+        if error < epsilon * epsilon:
             print("Jacobi's method")
             print('time:', time.time() - time0)
             print('iterations:', i)
@@ -60,9 +60,57 @@ def gauss_seidel(A, b, max_iter=1000, epsilon=1e-6):
     raise Exception("Metoda Gausa-Seidla nie zbiega się")
 
 
+def LU_factorization(A, b):
+    n = len(A)
+
+    # utworzenie macierzy trójkątnej górnej U i macierzy trójkątnej dolnej L
+    L = [[0.0] * n for i in range(n)]
+    U = [[0.0] * n for i in range(n)]
+
+    # wypełnienie macierzy trójkątnej dolnej L oraz macierzy trójkątnej górnej U
+    for j in range(n):
+        # wypełnienie j-tej kolumny macierzy U
+        for i in range(j, n):
+            sum_ = 0.0
+            for k in range(j):
+                sum_ += L[i][k] * U[k][j]
+            U[i][j] = A[i][j] - sum_
+
+        # wypełnienie j-tej kolumny macierzy L
+        for i in range(j, n):
+            if i == j:
+                L[i][j] = 1.0
+            else:
+                sum_ = 0.0
+                for k in range(j):
+                    sum_ += L[j][k] * U[k][i]
+                L[j][i] = (A[j][i] - sum_) / U[j][j]
+
+    # rozwiązanie układu równań Ax = b na podstawie faktoryzacji LU
+    y = [0.0] * n
+    x = [0.0] * n
+    # rozwiązanie Ly = b (forward substitution)
+    for i in range(n):
+        sum_ = 0.0
+        for j in range(i):
+            sum_ += L[i][j] * y[j]
+        y[i] = b[i] - sum_
+    # rozwiązanie Ux = y (backward substitution)
+    for i in range(n - 1, -1, -1):
+        sum_ = 0.0
+        for j in range(i + 1, n):
+            sum_ += U[i][j] * x[j]
+        x[i] = (y[i] - sum_) / U[i][i]
+
+    return x
+
+
 N = 9  # *5*6
 A = [[0 for i in range(N)] for j in range(N)]
+f = 8
+b = [sin(i * (f + 1)) for i in range(N)]
 
+c = dot_product(A, b)
 e = 7
 a1 = 5 + e
 for i in range(N):
@@ -84,14 +132,8 @@ for i in range(N - 2):
 
 # print(A)
 
-f = 8
-b = [sin(i * (f + 1)) for i in range(N)]
 
-c = dot_product(A, b)
-
-v1 = [1, 2, 3]
-v2 = [4, 5, 6]
-print(dot_product(v1, v2))
-
-print(solve_jacobi(A, b))
+print(jacobi(A, b))
 print(gauss_seidel(A, b))
+
+print(LU_factorization(A, b))
